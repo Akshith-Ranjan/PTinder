@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Prime </title>
+    {% load static %}
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+     <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyBVozgLovAkJyv8ZOIbPbbr70zhCXjUSKg"></script>
+    <script src="{% static "gmaps.js" %}"></script>
+    <style>
+    body{margin-top:20px;}
+    #map { height: 400px !important; }
+    form{margin-top:20px;}
+    </style>
+  </head>
+  <body>
+    <div class="container text-center">
+    <div class="jumbotron">
+    <h1>Prime </h1>
+    	<div class="row">
+    	<div class="col-xs-12 col-md-10 col-md-offset-2">
+        <form id="form">
+    		<div class="col-xs-10">
+    	      <input id="area" type="text" class="form-control" placeholder="Search movies" name="area">
+        </div>
+    	      <div class="col-xs-2">
+              <button id="submit" type="submit" class=" col-centered form-control">
+                <i class="fa fa-search"></i>
+              </button>
+            </div>
+        </form>
+    	</div>
+    	</div>
+
+      <div class="row jumbotron">
+        <div class="col-xs-12 col-md-4">
+          <div id="list"></div>
+        </div>
+        <div class="col-xs-12 col-md-8">
+          <div id="map"></div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+    <script>
+
+    $(document).ready(function(){
+      $( "#form" ).submit(function( event ) {
+        event.preventDefault();
+
+
+        var area = $("#area").val();
+        var url = "query/?area="+area;
+        $.ajax({
+          url: url,
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+          var obj = JSON.parse(data);
+          var girls=obj.girls;
+          var area=obj.area;
+          var msg ='<ul class="list-group">';
+          for(var i=0;i<girls.length;i++){
+            msg+='<li class="list-group-item">'+girls[i].name+'</li>';
+          }
+          msg+='</ul>';
+          console.log(msg);
+          $("#list").html(msg);
+
+          }
+        });
+
+        var map;
+        map = new GMaps({
+          div: '#map',
+          lat: -12.043333,
+          lng: -77.028333
+        });
+
+        map.addMarker({
+          lat: -12.043333,
+          lng: -77.028333,
+          title: 'Lima',
+          click: function(e) {
+            alert('You clicked in this marker');
+          }
+        });
+
+      });
+    });
+
+
+    </script>
+
+  </body>
+</html>
