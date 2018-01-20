@@ -16,7 +16,7 @@ def query(request):
         area = request.GET.get('area', '')
         girls = Girls.objects.filter(area__contains=area)
         area = Areas.objects.filter(area__contains=area)[0]
-        s = '{"area":["lat":"'+area.lat+'","lon":"'+area.lon+'"],"girls":[';
+        s = '{"lat":"'+area.lat+'","lon":"'+area.lon+'","girls":[';
         for girl in girls:
             s+='{ "name" : "'+girl.name+'",'
             s+='"age" : "'+girl.age+'",'

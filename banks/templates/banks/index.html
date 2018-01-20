@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Prime </title>
+    <title>Prime Tinder</title>
     {% load static %}
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
      <!-- Latest compiled and minified CSS -->
@@ -15,14 +15,21 @@
     <script src="{% static "gmaps.js" %}"></script>
     <style>
     body{margin-top:20px;}
-    #map { height: 400px !important; }
+
     form{margin-top:20px;}
     </style>
   </head>
   <body>
     <div class="container text-center">
     <div class="jumbotron">
-    <h1>Prime </h1>
+      <div class="row">
+        <div class="col-xs-2 col-xs-offset-5">
+          <img class="img-responsive" src="{% static "tinder.png" %}" alt="logo">
+        </div>
+          </div>
+    <h1>Prime Tinder</h1>
+
+
     	<div class="row">
     	<div class="col-xs-12 col-md-10 col-md-offset-2">
         <form id="form">
@@ -37,8 +44,8 @@
         </form>
     	</div>
     	</div>
-
-      <div class="row jumbotron">
+      <h2 id="h2"></h2>
+      <div class="answer row jumbotron">
         <div class="col-xs-12 col-md-4">
           <div id="list"></div>
         </div>
@@ -54,6 +61,8 @@
     $(document).ready(function(){
       $( "#form" ).submit(function( event ) {
         event.preventDefault();
+        $("#map").css("height","0px")
+        $(".answer").css("background-color","default");
 
 
         var area = $("#area").val();
@@ -61,14 +70,40 @@
         $.ajax({
           url: url,
           dataType: "json",
+          error: function(){
+            $("#list").html("Sorry, No girls in your area.");
+          },
           success: function(data){
             console.log(data);
           var obj = JSON.parse(data);
           var girls=obj.girls;
           var area=obj.area;
+          var map;
+          $("#h2").html("People Near You");
+          $("#map").css("height","400px")
+          $(".answer").css("background-color","#0000002e");
+          var etop = $('#h2').offset().top;
+        	$('html, body').animate({
+        	  scrollTop: etop
+        	}, 1000);
+
+
+          map = new GMaps({
+            div: '#map',
+            lat: obj.lat,
+            lng: obj.lon
+          });
           var msg ='<ul class="list-group">';
           for(var i=0;i<girls.length;i++){
             msg+='<li class="list-group-item">'+girls[i].name+'</li>';
+            map.addMarker({
+              lat: girls[i].lat,
+              lng: girls[i].lon,
+              title: girls[i].name,
+              infoWindow: {
+                content: '<p>'+girls[i].name+'</p>'
+              }
+            });
           }
           msg+='</ul>';
           console.log(msg);
@@ -77,21 +112,9 @@
           }
         });
 
-        var map;
-        map = new GMaps({
-          div: '#map',
-          lat: -12.043333,
-          lng: -77.028333
-        });
 
-        map.addMarker({
-          lat: -12.043333,
-          lng: -77.028333,
-          title: 'Lima',
-          click: function(e) {
-            alert('You clicked in this marker');
-          }
-        });
+
+
 
       });
     });
